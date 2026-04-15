@@ -1,10 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
-
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 @theme inline {
   --color-background: hsl(var(--background));
@@ -52,22 +51,16 @@
 }
 
 :root {
-  /* Default to a dark theme since this is a monastery setting */
   --button-outline: rgba(255,255,255, .10);
   --badge-outline: rgba(255,255,255, .05);
   --opaque-button-border-intensity: -8;
   --elevate-1: rgba(255,255,255, .03);
   --elevate-2: rgba(255,255,255, .08);
 
-  /* Very dark warm brown/black for background */
   --background: 30 15% 6%;
-  /* Cream / parchment for text */
   --foreground: 45 30% 90%;
-  
-  /* Borders in dull gold / dark brown */
   --border: 35 25% 15%;
 
-  /* Cards are slightly lighter brown with a hint of gold */
   --card: 30 18% 9%;
   --card-foreground: 45 30% 90%;
   --card-border: 40 30% 20%;
@@ -76,23 +69,18 @@
   --popover-foreground: 45 30% 90%;
   --popover-border: 40 30% 20%;
 
-  /* Primary is a warm amber/gold */
   --primary: 43 74% 49%;
   --primary-foreground: 30 15% 6%;
 
-  /* Secondary is a dark earthy tone */
   --secondary: 35 20% 15%;
   --secondary-foreground: 45 30% 80%;
 
-  /* Muted is for subtle elements */
   --muted: 35 15% 12%;
   --muted-foreground: 45 15% 60%;
 
-  /* Accent is like candle light */
   --accent: 40 80% 60%;
   --accent-foreground: 30 15% 6%;
 
-  /* Destructive - deep red */
   --destructive: 0 60% 40%;
   --destructive-foreground: 45 30% 90%;
 
@@ -108,24 +96,85 @@
   --sidebar-accent-foreground: 45 30% 90%;
   --sidebar-ring: 43 74% 49%;
 
+  --chart-1: 43 74% 49%;
+  --chart-2: 35 60% 40%;
+  --chart-3: 25 50% 35%;
+  --chart-4: 15 55% 30%;
+  --chart-5: 50 70% 55%;
+
   --app-font-sans: 'Crimson Text', serif;
   --app-font-serif: 'Cinzel Decorative', serif;
   --app-font-mono: Menlo, monospace;
-  
-  --radius: 0.25rem; /* Slight rounding, not too modern */
 
-  /* Fallbacks */
+  --radius: 0.25rem;
+
+  --shadow-2xs: 0px 1px 2px 0px rgba(0,0,0,0.4);
+  --shadow-xs: 0px 1px 4px 0px rgba(0,0,0,0.4);
+  --shadow-sm: 0px 2px 4px 0px rgba(0,0,0,0.5), 0px 1px 2px -1px rgba(0,0,0,0.3);
+  --shadow: 0px 2px 8px 0px rgba(0,0,0,0.5), 0px 1px 2px -1px rgba(0,0,0,0.3);
+  --shadow-md: 0px 4px 12px 0px rgba(0,0,0,0.5), 0px 2px 4px -1px rgba(0,0,0,0.3);
+  --shadow-lg: 0px 8px 24px 0px rgba(0,0,0,0.6), 0px 4px 6px -1px rgba(0,0,0,0.4);
+  --shadow-xl: 0px 16px 48px 0px rgba(0,0,0,0.7), 0px 8px 10px -1px rgba(0,0,0,0.4);
+  --shadow-2xl: 0px 24px 64px 0px rgba(0,0,0,0.8);
+
   --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
 .dark {
-  /* Same as root since we force dark theme conceptually */
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .05);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
+
+  --background: 30 15% 6%;
+  --foreground: 45 30% 90%;
+  --border: 35 25% 15%;
+  --card: 30 18% 9%;
+  --card-foreground: 45 30% 90%;
+  --card-border: 40 30% 20%;
+  --popover: 30 18% 9%;
+  --popover-foreground: 45 30% 90%;
+  --popover-border: 40 30% 20%;
+  --primary: 43 74% 49%;
+  --primary-foreground: 30 15% 6%;
+  --secondary: 35 20% 15%;
+  --secondary-foreground: 45 30% 80%;
+  --muted: 35 15% 12%;
+  --muted-foreground: 45 15% 60%;
+  --accent: 40 80% 60%;
+  --accent-foreground: 30 15% 6%;
+  --destructive: 0 60% 40%;
+  --destructive-foreground: 45 30% 90%;
+  --input: 35 25% 15%;
+  --ring: 43 74% 49%;
+  --chart-1: 43 74% 49%;
+  --chart-2: 35 60% 40%;
+  --chart-3: 25 50% 35%;
+  --chart-4: 15 55% 30%;
+  --chart-5: 50 70% 55%;
+
+  --shadow-2xs: 0px 1px 2px 0px rgba(0,0,0,0.6);
+  --shadow-xs: 0px 1px 4px 0px rgba(0,0,0,0.6);
+  --shadow-sm: 0px 2px 4px 0px rgba(0,0,0,0.7), 0px 1px 2px -1px rgba(0,0,0,0.5);
+  --shadow: 0px 2px 8px 0px rgba(0,0,0,0.7), 0px 1px 2px -1px rgba(0,0,0,0.5);
+  --shadow-md: 0px 4px 12px 0px rgba(0,0,0,0.7), 0px 2px 4px -1px rgba(0,0,0,0.5);
+  --shadow-lg: 0px 8px 24px 0px rgba(0,0,0,0.8), 0px 4px 6px -1px rgba(0,0,0,0.6);
+  --shadow-xl: 0px 16px 48px 0px rgba(0,0,0,0.9), 0px 8px 10px -1px rgba(0,0,0,0.6);
+  --shadow-2xl: 0px 24px 64px 0px rgba(0,0,0,0.95);
 }
 
 @layer base {
@@ -143,21 +192,88 @@
   }
 }
 
-/* Subtle pixel effect for borders */
 .pixel-border {
-  border-style: solid;
-  border-width: 2px;
-  border-image: url('data:image/svg+xml;utf8,<svg width="6" height="6" xmlns="http://www.w3.org/2000/svg"><rect width="2" height="2" fill="%23d4af37" /><rect x="2" y="2" width="2" height="2" fill="%23d4af37" /><rect x="4" y="4" width="2" height="2" fill="%23d4af37" /></svg>') 2 stretch;
+  box-shadow:
+    0 0 0 1px hsl(var(--primary)),
+    0 0 0 2px hsl(var(--background)),
+    0 0 0 3px hsl(var(--primary) / 0.4);
 }
 
-/* Parchment texture effect */
 .bg-parchment {
-  background-color: #fdfbf7;
-  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.05"/></svg>');
-  color: #2c241b;
+  background-color: hsl(40 30% 88%);
+  color: hsl(30 25% 15%);
 }
 
-/* Monastery texture for dark backgrounds */
 .bg-monastery {
-  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.03"/></svg>');
+  background-color: hsl(var(--background));
+}
+
+@layer utilities {
+  input[type="search"]::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  .no-default-hover-elevate {}
+  .no-default-active-elevate {}
+
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    border-radius: inherit;
+    z-index: 999;
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after {
+    inset: -1px;
+  }
 }
