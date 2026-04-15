@@ -3,20 +3,29 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Mesa de Oración API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: oraciones
+    description: Prayer operations
+  - name: usuarios
+    description: User operations
+  - name: favoritos
+    description: Favorites operations
+  - name: comentarios
+    description: Comment operations
+  - name: reacciones
+    description: Reaction operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +33,378 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/google:
+    get:
+      operationId: iniciarLoginGoogle
+      tags: [usuarios]
+      summary: Iniciar login con Google
+      responses:
+        "302":
+          description: Redirige a Google OAuth
+
+  /auth/google/callback:
+    get:
+      operationId: callbackGoogle
+      tags: [usuarios]
+      summary: Callback de Google OAuth
+      parameters:
+        - name: code
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: error
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "302":
+          description: Redirige a la app
+
+  /auth/logout:
+    post:
+      operationId: cerrarSesion
+      tags: [usuarios]
+      summary: Cerrar sesión
+      responses:
+        "200":
+          description: Sesión cerrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensajeRespuesta"
+
+  /auth/me:
+    get:
+      operationId: obtenerUsuarioActual
+      tags: [usuarios]
+      summary: Obtener usuario autenticado
+      responses:
+        "200":
+          description: Usuario actual
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Usuario"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensajeRespuesta"
+
+  /oraciones:
+    get:
+      operationId: listarOraciones
+      tags: [oraciones]
+      summary: Listar oraciones
+      parameters:
+        - name: categoria
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: busqueda
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: pagina
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limite
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 12
+      responses:
+        "200":
+          description: Lista de oraciones
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaOracionesRespuesta"
+    post:
+      operationId: crearOracion
+      tags: [oraciones]
+      summary: Crear una oración
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CrearOracionBody"
+      responses:
+        "201":
+          description: Oración creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Oracion"
+        "401":
+          description: No autenticado
+
+  /oraciones/destacadas:
+    get:
+      operationId: obtenerOracionesDestacadas
+      tags: [oraciones]
+      summary: Obtener oraciones destacadas (más reacciones y favoritos)
+      responses:
+        "200":
+          description: Oraciones destacadas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Oracion"
+
+  /oraciones/recientes:
+    get:
+      operationId: obtenerOracionesRecientes
+      tags: [oraciones]
+      summary: Obtener oraciones recientes
+      responses:
+        "200":
+          description: Oraciones recientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Oracion"
+
+  /oraciones/categorias:
+    get:
+      operationId: obtenerCategorias
+      tags: [oraciones]
+      summary: Obtener categorías disponibles con conteo
+      responses:
+        "200":
+          description: Categorías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoriaConteo"
+
+  /oraciones/{id}:
+    get:
+      operationId: obtenerOracion
+      tags: [oraciones]
+      summary: Obtener una oración por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Oración
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OracionDetalle"
+        "404":
+          description: No encontrada
+    put:
+      operationId: actualizarOracion
+      tags: [oraciones]
+      summary: Actualizar una oración
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActualizarOracionBody"
+      responses:
+        "200":
+          description: Oración actualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Oracion"
+        "401":
+          description: No autenticado
+        "403":
+          description: No autorizado
+    delete:
+      operationId: eliminarOracion
+      tags: [oraciones]
+      summary: Eliminar una oración
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Eliminada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensajeRespuesta"
+        "401":
+          description: No autenticado
+        "403":
+          description: No autorizado
+
+  /oraciones/{id}/favorito:
+    post:
+      operationId: alternarFavorito
+      tags: [favoritos]
+      summary: Agregar o quitar de favoritos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Estado de favorito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FavoritoRespuesta"
+        "401":
+          description: No autenticado
+
+  /oraciones/{id}/reaccionar:
+    post:
+      operationId: reaccionarOracion
+      tags: [reacciones]
+      summary: Reaccionar a una oración
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReaccionarBody"
+      responses:
+        "200":
+          description: Reacción registrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReaccionRespuesta"
+        "401":
+          description: No autenticado
+
+  /oraciones/{id}/comentarios:
+    get:
+      operationId: listarComentarios
+      tags: [comentarios]
+      summary: Listar comentarios de una oración
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Comentarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comentario"
+    post:
+      operationId: crearComentario
+      tags: [comentarios]
+      summary: Crear comentario en una oración
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CrearComentarioBody"
+      responses:
+        "201":
+          description: Comentario creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comentario"
+        "401":
+          description: No autenticado
+
+  /favoritos:
+    get:
+      operationId: listarFavoritos
+      tags: [favoritos]
+      summary: Listar oraciones favoritas del usuario
+      responses:
+        "200":
+          description: Oraciones favoritas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Oracion"
+        "401":
+          description: No autenticado
+
+  /mis-oraciones:
+    get:
+      operationId: listarMisOraciones
+      tags: [oraciones]
+      summary: Listar oraciones del usuario autenticado
+      responses:
+        "200":
+          description: Mis oraciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Oracion"
+        "401":
+          description: No autenticado
+
+  /estadisticas:
+    get:
+      operationId: obtenerEstadisticas
+      tags: [oraciones]
+      summary: Estadísticas generales de la comunidad
+      responses:
+        "200":
+          description: Estadísticas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Estadisticas"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +415,258 @@ components:
       required:
         - status
 
+    MensajeRespuesta:
+      type: object
+      properties:
+        mensaje:
+          type: string
+      required:
+        - mensaje
+
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+        googleId:
+          type: string
+        nombre:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+          nullable: true
+        creadoEn:
+          type: string
+          format: date-time
+      required:
+        - id
+        - googleId
+        - nombre
+        - email
+        - creadoEn
+
+    Oracion:
+      type: object
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        texto:
+          type: string
+        categoria:
+          type: string
+        duracionMinutos:
+          type: integer
+          nullable: true
+        imagen:
+          type: string
+          nullable: true
+        autor:
+          $ref: "#/components/schemas/UsuarioPublico"
+        totalAmenes:
+          type: integer
+        totalMeAyuda:
+          type: integer
+        totalLaRezareHoy:
+          type: integer
+        totalFavoritos:
+          type: integer
+        totalComentarios:
+          type: integer
+        esFavorito:
+          type: boolean
+        miReaccion:
+          type: string
+          nullable: true
+        creadoEn:
+          type: string
+          format: date-time
+      required:
+        - id
+        - titulo
+        - texto
+        - categoria
+        - autor
+        - totalAmenes
+        - totalMeAyuda
+        - totalLaRezareHoy
+        - totalFavoritos
+        - totalComentarios
+        - esFavorito
+        - creadoEn
+
+    OracionDetalle:
+      allOf:
+        - $ref: "#/components/schemas/Oracion"
+        - type: object
+          properties:
+            comentarios:
+              type: array
+              items:
+                $ref: "#/components/schemas/Comentario"
+          required:
+            - comentarios
+
+    UsuarioPublico:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        avatar:
+          type: string
+          nullable: true
+      required:
+        - id
+        - nombre
+
+    Comentario:
+      type: object
+      properties:
+        id:
+          type: integer
+        texto:
+          type: string
+        autor:
+          $ref: "#/components/schemas/UsuarioPublico"
+        creadoEn:
+          type: string
+          format: date-time
+      required:
+        - id
+        - texto
+        - autor
+        - creadoEn
+
+    ListaOracionesRespuesta:
+      type: object
+      properties:
+        oraciones:
+          type: array
+          items:
+            $ref: "#/components/schemas/Oracion"
+        total:
+          type: integer
+        pagina:
+          type: integer
+        totalPaginas:
+          type: integer
+      required:
+        - oraciones
+        - total
+        - pagina
+        - totalPaginas
+
+    CategoriaConteo:
+      type: object
+      properties:
+        categoria:
+          type: string
+        conteo:
+          type: integer
+      required:
+        - categoria
+        - conteo
+
+    Estadisticas:
+      type: object
+      properties:
+        totalOraciones:
+          type: integer
+        totalUsuarios:
+          type: integer
+        totalComentarios:
+          type: integer
+        totalReacciones:
+          type: integer
+      required:
+        - totalOraciones
+        - totalUsuarios
+        - totalComentarios
+        - totalReacciones
+
+    CrearOracionBody:
+      type: object
+      properties:
+        titulo:
+          type: string
+          minLength: 3
+          maxLength: 200
+        texto:
+          type: string
+          minLength: 10
+        categoria:
+          type: string
+        duracionMinutos:
+          type: integer
+          nullable: true
+        imagen:
+          type: string
+          nullable: true
+      required:
+        - titulo
+        - texto
+        - categoria
+
+    ActualizarOracionBody:
+      type: object
+      properties:
+        titulo:
+          type: string
+          minLength: 3
+          maxLength: 200
+        texto:
+          type: string
+          minLength: 10
+        categoria:
+          type: string
+        duracionMinutos:
+          type: integer
+          nullable: true
+        imagen:
+          type: string
+          nullable: true
+
+    ReaccionarBody:
+      type: object
+      properties:
+        tipo:
+          type: string
+          enum: [amen, me_ayuda, la_rezare_hoy]
+      required:
+        - tipo
+
+    FavoritoRespuesta:
+      type: object
+      properties:
+        esFavorito:
+          type: boolean
+        mensaje:
+          type: string
+      required:
+        - esFavorito
+        - mensaje
+
+    ReaccionRespuesta:
+      type: object
+      properties:
+        tipo:
+          type: string
+          nullable: true
+        mensaje:
+          type: string
+        totalAmenes:
+          type: integer
+        totalMeAyuda:
+          type: integer
+        totalLaRezareHoy:
+          type: integer
+      required:
+        - mensaje
+        - totalAmenes
+        - totalMeAyuda
+        - totalLaRezareHoy
