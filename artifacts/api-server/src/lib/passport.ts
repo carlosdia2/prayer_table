@@ -8,10 +8,8 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
 if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
-  const domains = process.env.REPLIT_DOMAINS?.split(",")[0] ?? "localhost";
-  const callbackURL = process.env.NODE_ENV === "production"
-    ? `https://${domains}/api/auth/google/callback`
-    : `http://localhost/api/auth/google/callback`;
+  const publicBaseUrl = process.env.API_PUBLIC_URL ?? process.env.PUBLIC_BASE_URL ?? "http://localhost:3000";
+  const callbackURL = `${publicBaseUrl.replace(/\/$/, "")}/api/auth/google/callback`;
 
   passport.use(
     new GoogleStrategy(

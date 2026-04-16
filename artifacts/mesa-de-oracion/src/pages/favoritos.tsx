@@ -1,13 +1,20 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
-import { useListarFavoritos, useObtenerUsuarioActual } from "@workspace/api-client-react";
+import {
+  getListarFavoritosQueryKey,
+  getObtenerUsuarioActualQueryKey,
+  useListarFavoritos,
+  useObtenerUsuarioActual,
+} from "@workspace/api-client-react";
 import { Layout } from "@/components/layout";
 import { OracionList } from "@/components/oracion-list";
 import { Bookmark, Flame } from "lucide-react";
 
 export default function Favoritos() {
   const [, setLocation] = useLocation();
-  const { data: user, isLoading: userLoading } = useObtenerUsuarioActual({ query: { retry: false } });
+  const { data: user, isLoading: userLoading } = useObtenerUsuarioActual({
+    query: { retry: false, queryKey: getObtenerUsuarioActualQueryKey() },
+  });
   
   useEffect(() => {
     if (!userLoading && !user) {
@@ -16,7 +23,7 @@ export default function Favoritos() {
   }, [user, userLoading, setLocation]);
 
   const { data: favoritos, isLoading: favsLoading } = useListarFavoritos({
-    query: { enabled: !!user }
+    query: { enabled: !!user, queryKey: getListarFavoritosQueryKey() }
   });
 
   if (userLoading) return <Layout><div className="flex-1 flex items-center justify-center"><Flame className="animate-pulse text-primary w-8 h-8" /></div></Layout>;

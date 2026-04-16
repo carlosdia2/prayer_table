@@ -1,4 +1,4 @@
-import { Oracion } from "@workspace/api-client-react/src/generated/api.schemas";
+import type { Oracion } from "@workspace/api-client-react";
 import { OracionCard } from "./oracion-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sparkles } from "lucide-react";

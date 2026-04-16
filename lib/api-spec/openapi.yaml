@@ -612,6 +612,15 @@ components:
         - texto
         - categoria
 
+    CrearComentarioBody:
+      type: object
+      properties:
+        texto:
+          type: string
+          minLength: 1
+      required:
+        - texto
+
     ActualizarOracionBody:
       type: object
       properties:

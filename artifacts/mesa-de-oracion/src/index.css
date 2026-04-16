@@ -133,6 +133,50 @@
   --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
+.light {
+  --button-outline: rgba(55, 35, 16, .18);
+  --badge-outline: rgba(55, 35, 16, .12);
+  --opaque-button-border-intensity: -10;
+  --elevate-1: rgba(90, 54, 20, .05);
+  --elevate-2: rgba(90, 54, 20, .1);
+
+  --background: 38 37% 88%;
+  --foreground: 28 31% 13%;
+  --border: 36 28% 65%;
+  --card: 40 43% 91%;
+  --card-foreground: 28 31% 13%;
+  --card-border: 36 36% 58%;
+  --popover: 40 43% 91%;
+  --popover-foreground: 28 31% 13%;
+  --popover-border: 36 36% 58%;
+  --primary: 39 92.44% 10.9%;
+  --primary-foreground: 44 45% 94%;
+  --secondary: 37 35% 80%;
+  --secondary-foreground: 28 31% 18%;
+  --muted: 39 31% 82%;
+  --muted-foreground: 30 18% 34%;
+  --accent: 204 54% 34%;
+  --accent-foreground: 44 45% 94%;
+  --destructive: 0 60% 38%;
+  --destructive-foreground: 44 45% 94%;
+  --input: 38 32% 77%;
+  --ring: 39 76% 32%;
+  --chart-1: 39 76% 32%;
+  --chart-2: 204 54% 34%;
+  --chart-3: 354 48% 39%;
+  --chart-4: 133 28% 34%;
+  --chart-5: 28 51% 31%;
+
+  --shadow-2xs: 0px 1px 2px 0px rgba(60, 34, 12, 0.14);
+  --shadow-xs: 0px 1px 4px 0px rgba(60, 34, 12, 0.16);
+  --shadow-sm: 0px 2px 4px 0px rgba(60, 34, 12, 0.18), 0px 1px 2px -1px rgba(60, 34, 12, 0.12);
+  --shadow: 0px 2px 8px 0px rgba(60, 34, 12, 0.18), 0px 1px 2px -1px rgba(60, 34, 12, 0.12);
+  --shadow-md: 0px 4px 12px 0px rgba(60, 34, 12, 0.2), 0px 2px 4px -1px rgba(60, 34, 12, 0.14);
+  --shadow-lg: 0px 8px 24px 0px rgba(60, 34, 12, 0.24), 0px 4px 6px -1px rgba(60, 34, 12, 0.16);
+  --shadow-xl: 0px 16px 48px 0px rgba(60, 34, 12, 0.28), 0px 8px 10px -1px rgba(60, 34, 12, 0.18);
+  --shadow-2xl: 0px 24px 64px 0px rgba(60, 34, 12, 0.32);
+}
+
 .dark {
   --button-outline: rgba(255,255,255, .10);
   --badge-outline: rgba(255,255,255, .05);
@@ -206,6 +250,56 @@
 
 .bg-monastery {
   background-color: hsl(var(--background));
+}
+
+.monastic-page-bg {
+  position: relative;
+  isolation: isolate;
+}
+
+.monastic-page-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: url("/backgrounds/bg-horizontal.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.monastic-page-bg::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, hsl(var(--background) / 0.1), hsl(var(--background) / 0.54) 46%, hsl(var(--background) / 0.88)),
+    radial-gradient(circle at 50% 18%, rgba(212, 175, 55, 0.16), transparent 42%),
+    hsl(var(--background) / 0.16);
+}
+
+.light .monastic-page-bg::after {
+  background:
+    linear-gradient(180deg, hsl(var(--background) / 0.16), hsl(var(--background) / 0.44) 48%, hsl(var(--background) / 0.82)),
+    radial-gradient(circle at 50% 18%, rgba(142, 89, 19, 0.16), transparent 42%),
+    hsl(var(--background) / 0.24);
+}
+
+.light .hero-subtitle {
+  background: hsl(var(--background) / 0.58);
+  border: 1px solid hsl(var(--primary) / 0.14);
+  box-shadow: 0 8px 28px rgba(55, 35, 16, 0.16);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 767px) {
+  .monastic-page-bg::before {
+    background-image: url("/backgrounds/bg-vertical.png");
+    background-position: center top;
+  }
 }
 
 @layer utilities {

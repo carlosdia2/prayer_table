@@ -1,14 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
-import { seedIfEmpty } from "./lib/seed";
 
-const rawPort = process.env["PORT"];
-
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
+const rawPort = process.env["PORT"] ?? "3000";
 
 const port = Number(rawPort);
 
@@ -24,9 +17,12 @@ app.listen(port, async (err) => {
 
   logger.info({ port }, "Server listening");
 
-  try {
-    await seedIfEmpty();
-  } catch (seedErr) {
-    logger.error({ err: seedErr }, "Error en seed inicial");
+  if (process.env.DATABASE_URL) {
+    try {
+      const { seedIfEmpty } = await import("./lib/seed");
+      await seedIfEmpty();
+    } catch (seedErr) {
+      logger.error({ err: seedErr }, "Error en seed inicial");
+    }
   }
 });

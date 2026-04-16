@@ -102,6 +102,10 @@ export interface ActualizarOracionBody {
   imagen?: string | null;
 }
 
+export interface CrearComentarioBody {
+  texto: string;
+}
+
 export type ReaccionarBodyTipo =
   (typeof ReaccionarBodyTipo)[keyof typeof ReaccionarBodyTipo];
 

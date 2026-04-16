@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import passport from "passport";
 
 const router: IRouter = Router();
+const webBaseUrl = (process.env.WEB_PUBLIC_URL ?? "/").replace(/\/$/, "");
 
 router.get("/auth/google", (req, res, next) => {
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
@@ -15,15 +16,15 @@ router.get(
   "/auth/google/callback",
   (req, res, next) => {
     if (req.query.error) {
-      res.redirect("/?error=login_cancelado");
+      res.redirect(`${webBaseUrl || ""}/?error=login_cancelado`);
       return;
     }
     passport.authenticate("google", {
-      failureRedirect: "/login?error=fallo_login",
+      failureRedirect: `${webBaseUrl || ""}/login?error=fallo_login`,
     })(req, res, next);
   },
   (_req, res) => {
-    res.redirect("/");
+    res.redirect(`${webBaseUrl || ""}/`);
   }
 );
 

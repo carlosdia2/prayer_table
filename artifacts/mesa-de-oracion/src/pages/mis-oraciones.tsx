@@ -1,6 +1,12 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
-import { useListarMisOraciones, useObtenerUsuarioActual, useEliminarOracion, getListarMisOracionesQueryKey } from "@workspace/api-client-react";
+import {
+  getListarMisOracionesQueryKey,
+  getObtenerUsuarioActualQueryKey,
+  useEliminarOracion,
+  useListarMisOraciones,
+  useObtenerUsuarioActual,
+} from "@workspace/api-client-react";
 import { Layout } from "@/components/layout";
 import { BookOpen, Flame, Trash2, Clock, MessageCircle, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,7 +20,9 @@ import { es } from "date-fns/locale";
 export default function MisOraciones() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
-  const { data: user, isLoading: userLoading } = useObtenerUsuarioActual({ query: { retry: false } });
+  const { data: user, isLoading: userLoading } = useObtenerUsuarioActual({
+    query: { retry: false, queryKey: getObtenerUsuarioActualQueryKey() },
+  });
   
   useEffect(() => {
     if (!userLoading && !user) {
@@ -23,7 +31,7 @@ export default function MisOraciones() {
   }, [user, userLoading, setLocation]);
 
   const { data: misOraciones, isLoading: oracionesLoading } = useListarMisOraciones({
-    query: { enabled: !!user }
+    query: { enabled: !!user, queryKey: getListarMisOracionesQueryKey() }
   });
 
   const eliminarOracion = useEliminarOracion();
@@ -33,7 +41,7 @@ export default function MisOraciones() {
     e.stopPropagation();
     
     if (confirm("¿Estás seguro de que deseas eliminar esta oración? Esta acción no se puede deshacer.")) {
-      eliminarOracion.mutate(id, {
+      eliminarOracion.mutate({ id }, {
         onSuccess: (data) => {
           toast.success(data.mensaje);
           queryClient.invalidateQueries({ queryKey: getListarMisOracionesQueryKey() });

@@ -1,16 +1,15 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { Sparkles, Flame } from "lucide-react";
-import { useObtenerUsuarioActual } from "@workspace/api-client-react";
+import { getObtenerUsuarioActualQueryKey, useObtenerUsuarioActual } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SiGoogle } from "react-icons/si";
-import bgImg from "@assets/efb097aa-dfe7-4e40-9bdb-fbbc53d6e48e_1776263375028.png";
 
 export default function Login() {
   const [, setLocation] = useLocation();
   const { data: user, isLoading } = useObtenerUsuarioActual({
-    query: { retry: false }
+    query: { retry: false, queryKey: getObtenerUsuarioActualQueryKey() }
   });
 
   useEffect(() => {
@@ -24,11 +23,14 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative bg-background">
+    <div className="monastic-page-bg min-h-screen w-full flex items-center justify-center relative bg-background/70">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img src={bgImg} alt="Catedral" className="w-full h-full object-cover opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/80 to-background" />
+        <picture>
+          <source media="(max-width: 767px)" srcSet="/backgrounds/bg-vertical.png" />
+          <img src="/backgrounds/bg-horizontal.png" alt="Catedral" className="w-full h-full object-cover opacity-65" />
+        </picture>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/18 via-background/58 to-background/88" />
       </div>
 
       <div className="relative z-10 w-full max-w-md p-4">

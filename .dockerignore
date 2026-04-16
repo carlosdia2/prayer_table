@@ -1,0 +1,14 @@
+.git
+.local
+.cache
+node_modules
+**/node_modules
+**/dist
+*.log
+*.tsbuildinfo
+.env
+.env.*
+!*.env.example
+bg-horizontal.png
+bg-vertical.png
+login-inspiration.png

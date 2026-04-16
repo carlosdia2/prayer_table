@@ -1,97 +1,133 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Search, Flame, ScrollText, Cross } from "lucide-react";
-import { useObtenerOracionesDestacadas, useObtenerOracionesRecientes, useObtenerCategorias, useListarOraciones } from "@workspace/api-client-react";
+import { Search, Flame, Plus } from "lucide-react";
+import {
+  getListarOracionesQueryKey,
+  getObtenerUsuarioActualQueryKey,
+  useListarOraciones,
+  useObtenerCategorias,
+  useObtenerOracionesDestacadas,
+  useObtenerOracionesRecientes,
+  useObtenerUsuarioActual,
+} from "@workspace/api-client-react";
 import { Layout } from "@/components/layout";
 import { OracionList } from "@/components/oracion-list";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import heroImg from "@assets/5b66c678-515a-4ec2-af93-c5565adb9eab_1776263375028.png";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategoria, setSelectedCategoria] = useState<string>("todas");
 
-  // Add debounce logic here if needed
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setDebouncedSearch(searchTerm);
   };
 
+  const { data: user } = useObtenerUsuarioActual({
+    query: { retry: false, queryKey: getObtenerUsuarioActualQueryKey() },
+  });
   const { data: categorias, isLoading: loadingCategorias } = useObtenerCategorias();
-  
-  // Default views
   const { data: destacadas, isLoading: loadingDestacadas } = useObtenerOracionesDestacadas();
   const { data: recientes, isLoading: loadingRecientes } = useObtenerOracionesRecientes();
 
-  // Search/Filter view
   const isSearching = debouncedSearch !== "" || selectedCategoria !== "todas";
-  const { data: searchResults, isLoading: loadingSearch } = useListarOraciones(
-    { 
-      busqueda: debouncedSearch || undefined, 
-      categoria: selectedCategoria !== "todas" ? selectedCategoria : undefined 
-    },
-    { query: { enabled: isSearching } }
-  );
+  const searchParams = {
+    busqueda: debouncedSearch || undefined,
+    categoria: selectedCategoria !== "todas" ? selectedCategoria : undefined,
+  };
+  const { data: searchResults, isLoading: loadingSearch } = useListarOraciones(searchParams, {
+    query: { enabled: isSearching, queryKey: getListarOracionesQueryKey(searchParams) },
+  });
+
+  const handleCategoryClick = (cat: string) => {
+    setSelectedCategoria(cat);
+    setDebouncedSearch("");
+    setSearchTerm("");
+  };
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative w-full overflow-hidden bg-background border-b border-primary/20">
-        <div className="absolute inset-0 z-0 opacity-20">
-          <img src={heroImg} alt="Interior de monasterio" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+      {/* Hero compacto */}
+      <section className="relative w-full overflow-hidden border-b border-primary/20">
+        <div className="absolute inset-0 z-0">
+          <picture>
+            <source media="(max-width: 767px)" srcSet="/backgrounds/bg-vertical.png" />
+            <img
+              src="/backgrounds/bg-horizontal.png"
+              alt="Interior de monasterio iluminado por vitrales"
+              className="w-full h-full object-cover object-top opacity-75"
+            />
+          </picture>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/45 to-background/86" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/58 via-background/5 to-background/58" />
         </div>
-        
-        <div className="container relative z-10 mx-auto px-4 py-20 md:py-32 flex flex-col items-center text-center">
-          <Flame className="w-12 h-12 text-primary animate-pulse mb-6 opacity-80" />
-          <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-4 tracking-wider drop-shadow-md">
+
+        <div className="container relative z-10 mx-auto px-4 pt-10 pb-8 flex flex-col items-center text-center">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-px w-12 bg-primary/40" />
+            <Flame className="w-5 h-5 text-primary opacity-70" />
+            <div className="h-px w-12 bg-primary/40" />
+          </div>
+
+          <h1 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-2 tracking-wider drop-shadow-md leading-tight">
             Mesa de Oración
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl font-serif italic mb-8">
-            "Donde peregrinos modernos encuentran palabras para rezar."
+          <p className="hero-subtitle text-base text-foreground/85 max-w-lg font-sans italic mb-6 drop-shadow-md px-4 py-2 rounded-sm">
+            "Donde peregrinos modernos
+            <br className="md:hidden" /> encuentran palabras para rezar."
           </p>
-          
-          <form onSubmit={handleSearch} className="w-full max-w-md relative flex items-center mb-12">
-            <Search className="absolute left-3 w-5 h-5 text-primary/50" />
-            <Input 
-              type="text" 
-              placeholder="Buscar oraciones, palabras, intenciones..." 
-              className="w-full pl-10 pr-4 py-6 bg-card/80 border-primary/30 text-foreground placeholder:text-muted-foreground/70 rounded-full focus-visible:ring-primary font-serif text-lg"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button type="submit" className="absolute right-2 rounded-full font-serif h-9">
+
+          <form onSubmit={handleSearch} className="w-full max-w-lg flex items-center gap-2 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
+              <Input
+                type="text"
+                placeholder="Buscar oraciones, intenciones..."
+                className="pl-10 bg-card/80 border-primary/30 text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-primary font-sans h-11"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="h-11 px-5 font-sans shrink-0">
               Buscar
             </Button>
           </form>
-          
+
+          {/* Filtros de categoría */}
           <div className="flex flex-wrap justify-center gap-2 max-w-3xl">
             {loadingCategorias ? (
-              Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-8 w-24 rounded-full bg-primary/10" />)
+              Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-7 w-24 rounded-full bg-primary/10" />
+              ))
             ) : (
               <>
-                <Button 
-                  variant={selectedCategoria === "todas" ? "default" : "outline"} 
-                  size="sm" 
-                  className={`rounded-full font-serif border-primary/30 ${selectedCategoria === "todas" ? "" : "bg-card/50 text-muted-foreground"}`}
-                  onClick={() => setSelectedCategoria("todas")}
+                <button
+                  className={`px-4 py-1 rounded-full text-xs font-sans border transition-all ${
+                    selectedCategoria === "todas"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card/50 text-muted-foreground border-primary/20 hover:border-primary/50 hover:text-primary"
+                  }`}
+                  onClick={() => handleCategoryClick("todas")}
                 >
                   Todas
-                </Button>
+                </button>
                 {categorias?.map((cat) => (
-                  <Button 
-                    key={cat.categoria} 
-                    variant={selectedCategoria === cat.categoria ? "default" : "outline"} 
-                    size="sm" 
-                    className={`rounded-full font-serif border-primary/30 ${selectedCategoria === cat.categoria ? "" : "bg-card/50 text-muted-foreground hover:text-primary"}`}
-                    onClick={() => setSelectedCategoria(cat.categoria)}
+                  <button
+                    key={cat.categoria}
+                    className={`px-4 py-1 rounded-full text-xs font-sans border transition-all ${
+                      selectedCategoria === cat.categoria
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card/50 text-muted-foreground border-primary/20 hover:border-primary/50 hover:text-primary"
+                    }`}
+                    onClick={() => handleCategoryClick(cat.categoria)}
                   >
-                    {cat.categoria} <span className="ml-1 opacity-50 text-[10px]">({cat.conteo})</span>
-                  </Button>
+                    {cat.categoria}
+                    <span className="ml-1.5 opacity-60 text-[10px]">({cat.conteo})</span>
+                  </button>
                 ))}
               </>
             )}
@@ -99,45 +135,78 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="container mx-auto px-4 py-12">
+      {/* Contenido principal */}
+      <section className="container mx-auto px-4 py-10">
         {isSearching ? (
           <div>
-            <div className="flex items-center gap-2 mb-8">
-              <ScrollText className="w-6 h-6 text-primary" />
-              <h2 className="text-2xl font-serif font-bold text-foreground">Resultados de búsqueda</h2>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-serif font-bold text-foreground">
+                  {selectedCategoria !== "todas" ? selectedCategoria : "Resultados de búsqueda"}
+                </h2>
+                {searchResults && (
+                  <p className="text-sm text-muted-foreground font-sans mt-0.5">
+                    {searchResults.oraciones.length} oración{searchResults.oraciones.length !== 1 ? "es" : ""} encontrada{searchResults.oraciones.length !== 1 ? "s" : ""}
+                  </p>
+                )}
+              </div>
+              <button
+                className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans underline underline-offset-4"
+                onClick={() => {
+                  setSelectedCategoria("todas");
+                  setDebouncedSearch("");
+                  setSearchTerm("");
+                }}
+              >
+                Limpiar filtro
+              </button>
             </div>
-            <OracionList 
-              oraciones={searchResults?.oraciones} 
-              isLoading={loadingSearch} 
-              emptyMessage="No se encontraron oraciones que coincidan con tu búsqueda."
+            <OracionList
+              oraciones={searchResults?.oraciones}
+              isLoading={loadingSearch}
+              emptyMessage="No se encontraron oraciones que coincidan."
             />
           </div>
         ) : (
           <Tabs defaultValue="destacadas" className="w-full">
-            <div className="flex justify-center mb-8">
+            <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
               <TabsList className="bg-card border border-primary/20 p-1">
-                <TabsTrigger value="destacadas" className="font-serif data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  Oraciones Destacadas
+                <TabsTrigger
+                  value="destacadas"
+                  className="font-serif text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  Destacadas
                 </TabsTrigger>
-                <TabsTrigger value="recientes" className="font-serif data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  Añadidas Recientemente
+                <TabsTrigger
+                  value="recientes"
+                  className="font-serif text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  Recientes
                 </TabsTrigger>
               </TabsList>
+
+              {user && (
+                <Link href="/crear">
+                  <Button size="sm" className="font-serif gap-2 h-9">
+                    <Plus className="w-4 h-4" />
+                    Escribir oración
+                  </Button>
+                </Link>
+              )}
             </div>
-            
+
             <TabsContent value="destacadas" className="mt-0">
-               <OracionList 
-                oraciones={destacadas} 
-                isLoading={loadingDestacadas} 
+              <OracionList
+                oraciones={destacadas}
+                isLoading={loadingDestacadas}
                 emptyMessage="Aún no hay oraciones destacadas."
               />
             </TabsContent>
-            
+
             <TabsContent value="recientes" className="mt-0">
-               <OracionList 
-                oraciones={recientes} 
-                isLoading={loadingRecientes} 
+              <OracionList
+                oraciones={recientes}
+                isLoading={loadingRecientes}
                 emptyMessage="Aún no hay oraciones recientes."
               />
             </TabsContent>

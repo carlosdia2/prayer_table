@@ -3,7 +3,12 @@ import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useCrearOracion, useObtenerCategorias, useObtenerUsuarioActual } from "@workspace/api-client-react";
+import {
+  getObtenerUsuarioActualQueryKey,
+  useCrearOracion,
+  useObtenerCategorias,
+  useObtenerUsuarioActual,
+} from "@workspace/api-client-react";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +17,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Feather, Flame, Sparkles } from "lucide-react";
-import bgImg from "@assets/c12151d5-d613-4cf8-9160-a256bae3d63e_1776263375028.png";
 
 const formSchema = z.object({
   titulo: z.string().min(3, "El título debe tener al menos 3 caracteres").max(200),
@@ -24,7 +28,9 @@ const formSchema = z.object({
 
 export default function CrearOracion() {
   const [, setLocation] = useLocation();
-  const { data: user, isLoading: userLoading } = useObtenerUsuarioActual({ query: { retry: false } });
+  const { data: user, isLoading: userLoading } = useObtenerUsuarioActual({
+    query: { retry: false, queryKey: getObtenerUsuarioActualQueryKey() },
+  });
   
   useEffect(() => {
     if (!userLoading && !user) {
@@ -75,8 +81,11 @@ export default function CrearOracion() {
       <div className="relative min-h-[calc(100vh-4rem)] w-full py-12 px-4">
         {/* Background */}
         <div className="absolute inset-0 z-0">
-          <img src={bgImg} alt="Fondo" className="w-full h-full object-cover opacity-20" />
-          <div className="absolute inset-0 bg-background/80" />
+          <picture>
+            <source media="(max-width: 767px)" srcSet="/backgrounds/bg-vertical.png" />
+            <img src="/backgrounds/bg-horizontal.png" alt="Fondo" className="w-full h-full object-cover opacity-60" />
+          </picture>
+          <div className="absolute inset-0 bg-background/64" />
         </div>
 
         <div className="relative z-10 max-w-2xl mx-auto">

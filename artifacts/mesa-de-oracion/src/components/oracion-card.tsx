@@ -1,9 +1,8 @@
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Heart, Clock, MessageCircle, Star, Sparkles } from "lucide-react";
-import { Oracion } from "@workspace/api-client-react/src/generated/api.schemas";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Clock, MessageCircle, Star, Flame } from "lucide-react";
+import type { Oracion } from "@workspace/api-client-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
@@ -11,79 +10,110 @@ interface OracionCardProps {
   oracion: Oracion;
 }
 
+const CATEGORY_ICONS: Record<string, string> = {
+  "Alabanza": "✦",
+  "Súplica": "✦",
+  "Acción de gracias": "✦",
+  "Intercesión": "✦",
+  "Contrición": "✦",
+  "Meditación": "✦",
+  "Novena": "✦",
+  "Rosario": "✦",
+  "Salmo": "✦",
+  "Serenidad": "✦",
+  "Sanación": "✦",
+  "Sabiduría": "✦",
+};
+
 export function OracionCard({ oracion }: OracionCardProps) {
-  const getInitials = (name: string) => name.substring(0, 2).toUpperCase();
+  const initials = oracion.autor.nombre.substring(0, 2).toUpperCase();
+  const totalReacciones = oracion.totalAmenes + oracion.totalMeAyuda + oracion.totalLaRezareHoy;
 
   return (
     <Link href={`/oracion/${oracion.id}`}>
-      <Card className="h-full flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 border border-primary/20 bg-card/80 backdrop-blur-sm overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <article className="group h-full flex flex-col cursor-pointer relative bg-card border border-primary/15 rounded-sm overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
         
+        {/* Imagen de cabecera si existe */}
         {oracion.imagen && (
-          <div className="w-full h-32 overflow-hidden border-b border-primary/20">
-            <img 
-              src={oracion.imagen} 
-              alt={oracion.titulo} 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          <div className="w-full h-36 overflow-hidden shrink-0 border-b border-primary/10">
+            <img
+              src={oracion.imagen}
+              alt={oracion.titulo}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
             />
           </div>
         )}
-        
-        <CardHeader className="p-4 pb-2 space-y-2 relative">
-          <div className="flex justify-between items-start gap-2">
-            <Badge variant="outline" className="bg-background/50 text-primary border-primary/30 font-serif text-xs uppercase tracking-wider backdrop-blur-md">
+
+        {/* Sin imagen: línea decorativa superior */}
+        {!oracion.imagen && (
+          <div className="h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+        )}
+
+        <div className="flex flex-col flex-1 p-5">
+          {/* Cabecera: categoría y duración */}
+          <div className="flex items-center justify-between mb-3 gap-2">
+            <span className="inline-block px-2.5 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-sm text-[10px] uppercase tracking-widest font-sans">
               {oracion.categoria}
-            </Badge>
+            </span>
             {oracion.duracionMinutos && (
-              <div className="flex items-center text-muted-foreground text-xs font-mono">
-                <Clock className="w-3 h-3 mr-1 opacity-70" />
+              <div className="flex items-center text-muted-foreground text-xs font-mono gap-0.5 shrink-0">
+                <Clock className="w-3 h-3 opacity-60" />
                 {oracion.duracionMinutos}m
               </div>
             )}
           </div>
-          <h3 className="font-serif text-xl font-bold leading-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
+
+          {/* Título */}
+          <h3 className="font-serif text-lg font-bold leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-3">
             {oracion.titulo}
           </h3>
-        </CardHeader>
-        
-        <CardContent className="p-4 pt-0 flex-1">
-          <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed">
+
+          {/* Extracto */}
+          <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed font-sans flex-1">
             {oracion.texto}
           </p>
-        </CardContent>
-        
-        <div className="mx-4 border-t border-primary/10 flex justify-center py-2 opacity-50">
-          <Sparkles className="w-4 h-4 text-primary" />
+
+          {/* Separador ornamental */}
+          <div className="flex items-center gap-2 my-3 opacity-30">
+            <div className="flex-1 h-px bg-primary" />
+            <span className="text-primary text-[8px]">✦</span>
+            <div className="flex-1 h-px bg-primary" />
+          </div>
+
+          {/* Pie: autor y stats */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-6 w-6 border border-primary/20 shrink-0">
+                <AvatarImage src={oracion.autor.avatar || undefined} />
+                <AvatarFallback className="bg-primary/15 text-primary text-[9px] font-serif">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-xs text-muted-foreground font-sans truncate max-w-[100px]">
+                {oracion.autor.nombre}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              {totalReacciones > 0 && (
+                <div className="flex items-center gap-1">
+                  <Flame className="w-3 h-3 text-primary/60" />
+                  <span>{totalReacciones}</span>
+                </div>
+              )}
+              {oracion.totalComentarios > 0 && (
+                <div className="flex items-center gap-1">
+                  <MessageCircle className="w-3 h-3" />
+                  <span>{oracion.totalComentarios}</span>
+                </div>
+              )}
+              {oracion.esFavorito && (
+                <Star className="w-3 h-3 text-primary fill-primary" />
+              )}
+            </div>
+          </div>
         </div>
-        
-        <CardFooter className="p-4 pt-0 flex justify-between items-center bg-transparent mt-auto">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-6 w-6 border border-primary/20">
-              <AvatarImage src={oracion.autor.avatar || undefined} />
-              <AvatarFallback className="bg-primary/20 text-primary text-[10px] font-serif">
-                {getInitials(oracion.autor.nombre)}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-xs text-muted-foreground font-medium truncate max-w-[100px]">
-              {oracion.autor.nombre}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Heart className="w-3 h-3" />
-              <span>{oracion.totalAmenes + oracion.totalMeAyuda + oracion.totalLaRezareHoy}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MessageCircle className="w-3 h-3" />
-              <span>{oracion.totalComentarios}</span>
-            </div>
-            {oracion.esFavorito && (
-              <Star className="w-3 h-3 text-primary fill-primary" />
-            )}
-          </div>
-        </CardFooter>
-      </Card>
+      </article>
     </Link>
   );
 }
