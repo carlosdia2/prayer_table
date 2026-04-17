@@ -152,7 +152,7 @@ export default function OracionDetalle() {
           </div>
         ) : (
           <>
-            <article className="bg-card border border-primary/20 rounded-sm overflow-hidden shadow-xl shadow-black/30">
+            <article className="bg-card/95 border border-primary/20 rounded-sm overflow-hidden shadow-xl shadow-black/30 backdrop-blur-md">
               {/* Imagen */}
               {oracion.imagen && (
                 <div className="w-full h-64 md:h-80 overflow-hidden relative border-b border-primary/10">
@@ -205,7 +205,7 @@ export default function OracionDetalle() {
                 </div>
 
                 {/* Separador ornamental */}
-                <div className="flex items-center gap-3 mb-8 opacity-50">
+                <div className="oracion-detail-separator flex items-center gap-3 mb-8 opacity-50">
                   <div className="flex-1 h-px bg-primary" />
                   <span className="text-primary text-xs">✦ ✦ ✦</span>
                   <div className="flex-1 h-px bg-primary" />
@@ -294,7 +294,7 @@ export default function OracionDetalle() {
 
               {/* Formulario */}
               {currentUser ? (
-                <form onSubmit={handleComentar} className="mb-8 bg-card border border-primary/15 rounded-sm p-4">
+                <form onSubmit={handleComentar} className="mb-8 bg-card/95 border border-primary/15 rounded-sm p-4 shadow-lg shadow-black/10 backdrop-blur-md">
                   <Textarea
                     placeholder="Añade una reflexión o petición..."
                     className="min-h-[90px] bg-background/50 border-primary/20 font-sans text-base resize-none mb-3 focus-visible:ring-primary"
@@ -314,7 +314,7 @@ export default function OracionDetalle() {
                   </div>
                 </form>
               ) : (
-                <div className="mb-8 bg-card/40 border border-dashed border-primary/20 p-6 rounded-sm text-center">
+                <div className="mb-8 bg-card/90 border border-dashed border-primary/20 p-6 rounded-sm text-center shadow-lg shadow-black/10 backdrop-blur-md">
                   <p className="text-muted-foreground font-sans mb-4 text-sm">
                     Inicia sesión para dejar un comentario.
                   </p>
@@ -340,7 +340,7 @@ export default function OracionDetalle() {
                   comentariosData.map((comentario) => (
                     <div
                       key={comentario.id}
-                      className="flex gap-3 p-4 rounded-sm bg-card/40 border border-primary/8"
+                      className="flex gap-3 p-4 rounded-sm bg-card/88 border border-primary/12 shadow-sm shadow-black/10 backdrop-blur-sm"
                     >
                       <Avatar className="h-8 w-8 border border-primary/20 mt-0.5 shrink-0">
                         <AvatarImage src={comentario.autor.avatar || undefined} />

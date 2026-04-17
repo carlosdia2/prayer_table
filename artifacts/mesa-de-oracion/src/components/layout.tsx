@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BookOpen, Home, Plus, Bookmark, User, LogOut, Loader2, Flame, Moon, Sun } from "lucide-react";
+import { BookOpen, Home, Plus, Bookmark, User, LogOut, Loader2, Flame, Moon, Sun, HeartHandshake } from "lucide-react";
 import { useObtenerUsuarioActual, useCerrarSesion, getObtenerUsuarioActualQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,8 @@ export function Layout({ children }: LayoutProps) {
 
   const desktopLinks = [
     { href: "/", label: "Inicio" },
+    { href: "/oraciones", label: "Oraciones" },
+    { href: "/peticiones", label: "Peticiones" },
     ...(user
       ? [
           { href: "/crear", label: "Escribir" },
@@ -64,7 +66,7 @@ export function Layout({ children }: LayoutProps) {
           <Link href="/" className="flex items-center gap-2 shrink-0 group">
             <Flame className="h-5 w-5 text-primary opacity-80 group-hover:opacity-100 transition-opacity" />
             <span className="font-serif text-base font-bold text-primary tracking-wider hidden sm:inline">
-              Mesa de Oración
+              MONAKUS
             </span>
           </Link>
 
@@ -165,7 +167,7 @@ export function Layout({ children }: LayoutProps) {
             <div className="h-px w-16 bg-primary" />
           </div>
           <p className="text-xs text-muted-foreground font-sans max-w-md mx-auto leading-relaxed">
-            Mesa de Oración · Contenido espiritual compartido por la comunidad.
+            MONAKUS · Contenido espiritual compartido por la comunidad.
             Este sitio no sustituye la guía espiritual personal.
           </p>
         </div>
@@ -183,6 +185,28 @@ export function Layout({ children }: LayoutProps) {
           >
             <Home className="h-5 w-5" />
             Inicio
+          </Link>
+
+          <Link
+            href="/oraciones"
+            className={cn(
+              "flex-1 flex flex-col items-center justify-center h-full gap-1 text-[10px] transition-colors",
+              location === "/oraciones" ? "text-primary" : "text-muted-foreground hover:text-primary"
+            )}
+          >
+            <BookOpen className="h-5 w-5" />
+            Oraciones
+          </Link>
+
+          <Link
+            href="/peticiones"
+            className={cn(
+              "flex-1 flex flex-col items-center justify-center h-full gap-1 text-[10px] transition-colors",
+              location === "/peticiones" ? "text-primary" : "text-muted-foreground hover:text-primary"
+            )}
+          >
+            <HeartHandshake className="h-5 w-5" />
+            Peticiones
           </Link>
 
           <Link
@@ -205,17 +229,6 @@ export function Layout({ children }: LayoutProps) {
               <Plus className="h-5 w-5" />
             </Link>
           </div>
-
-          <Link
-            href="/mis-oraciones"
-            className={cn(
-              "flex-1 flex flex-col items-center justify-center h-full gap-1 text-[10px] transition-colors",
-              location === "/mis-oraciones" ? "text-primary" : "text-muted-foreground hover:text-primary"
-            )}
-          >
-            <BookOpen className="h-5 w-5" />
-            Mis Oraciones
-          </Link>
 
           {user ? (
             <button

@@ -9,6 +9,8 @@ import OracionDetalle from "@/pages/oracion-detalle";
 import CrearOracion from "@/pages/crear-oracion";
 import Favoritos from "@/pages/favoritos";
 import MisOraciones from "@/pages/mis-oraciones";
+import Oraciones from "@/pages/oraciones";
+import Peticiones from "@/pages/peticiones";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -26,7 +28,9 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/oracion/:id" component={OracionDetalle} />
+      <Route path="/oraciones" component={Oraciones} />
       <Route path="/crear" component={CrearOracion} />
+      <Route path="/peticiones" component={Peticiones} />
       <Route path="/favoritos" component={Favoritos} />
       <Route path="/mis-oraciones" component={MisOraciones} />
       <Route component={NotFound} />

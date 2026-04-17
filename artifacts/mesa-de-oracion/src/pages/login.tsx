@@ -44,7 +44,7 @@ export default function Login() {
               </div>
             </div>
             <div className="space-y-2">
-              <CardTitle className="text-3xl font-serif text-primary tracking-wider">Mesa de Oración</CardTitle>
+              <CardTitle className="text-3xl font-serif text-primary tracking-wider">MONAKUS</CardTitle>
               <CardDescription className="font-serif italic text-muted-foreground/80 text-lg">
                 La paz sea contigo
               </CardDescription>

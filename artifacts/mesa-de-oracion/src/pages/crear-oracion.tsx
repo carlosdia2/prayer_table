@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Feather, Flame, Sparkles } from "lucide-react";
+import { Feather, Flame } from "lucide-react";
 
 const formSchema = z.object({
   titulo: z.string().min(3, "El título debe tener al menos 3 caracteres").max(200),
@@ -193,7 +193,7 @@ export default function CrearOracion() {
                   </Button>
                   <Button type="submit" size="lg" className="font-serif px-8" disabled={crearOracion.isPending}>
                     {crearOracion.isPending ? "Publicando..." : "Publicar Oración"}
-                    {!crearOracion.isPending && <Sparkles className="w-4 h-4 ml-2" />}
+                    {!crearOracion.isPending && <Feather className="w-4 h-4 ml-2" />}
                   </Button>
                 </div>
               </form>

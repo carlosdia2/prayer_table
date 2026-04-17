@@ -4,7 +4,6 @@ import { es } from "date-fns/locale";
 import { Clock, MessageCircle, Star, Flame } from "lucide-react";
 import type { Oracion } from "@workspace/api-client-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 
 interface OracionCardProps {
   oracion: Oracion;
@@ -74,7 +73,7 @@ export function OracionCard({ oracion }: OracionCardProps) {
           </p>
 
           {/* Separador ornamental */}
-          <div className="flex items-center gap-2 my-3 opacity-30">
+          <div className="oracion-card-separator flex items-center gap-2 my-3 opacity-30">
             <div className="flex-1 h-px bg-primary" />
             <span className="text-primary text-[8px]">✦</span>
             <div className="flex-1 h-px bg-primary" />

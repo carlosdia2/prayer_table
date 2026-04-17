@@ -7,6 +7,7 @@ import comentariosRouter from "./comentarios";
 import reaccionesRouter from "./reacciones";
 import estadisticasRouter from "./estadisticas";
 import misOracionesRouter from "./misOraciones";
+import adminImportRouter from "./adminImport";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(comentariosRouter);
 router.use(reaccionesRouter);
 router.use(estadisticasRouter);
 router.use(misOracionesRouter);
+router.use(adminImportRouter);
 
 export default router;

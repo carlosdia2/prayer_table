@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Search, Flame, Plus } from "lucide-react";
 import {
@@ -27,6 +27,15 @@ export default function Home() {
     setDebouncedSearch(searchTerm);
   };
 
+  useEffect(() => {
+    const categoria = new URLSearchParams(window.location.search).get("categoria");
+    if (categoria) {
+      setSelectedCategoria(categoria);
+      setDebouncedSearch("");
+      setSearchTerm("");
+    }
+  }, []);
+
   const { data: user } = useObtenerUsuarioActual({
     query: { retry: false, queryKey: getObtenerUsuarioActualQueryKey() },
   });
@@ -52,18 +61,11 @@ export default function Home() {
   return (
     <Layout>
       {/* Hero compacto */}
-      <section className="relative w-full overflow-hidden border-b border-primary/20">
+      <section className="relative w-full overflow-hidden border-b border-primary/20 bg-background/50 backdrop-blur-[1px]">
         <div className="absolute inset-0 z-0">
-          <picture>
-            <source media="(max-width: 767px)" srcSet="/backgrounds/bg-vertical.png" />
-            <img
-              src="/backgrounds/bg-horizontal.png"
-              alt="Interior de monasterio iluminado por vitrales"
-              className="w-full h-full object-cover object-top opacity-75"
-            />
-          </picture>
-          <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/45 to-background/86" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/58 via-background/5 to-background/58" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/8 via-background/35 to-background/68" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/48 via-background/5 to-background/48" />
+          <div className="absolute inset-0 bg-primary/5" />
         </div>
 
         <div className="container relative z-10 mx-auto px-4 pt-10 pb-8 flex flex-col items-center text-center">
@@ -74,7 +76,7 @@ export default function Home() {
           </div>
 
           <h1 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-2 tracking-wider drop-shadow-md leading-tight">
-            Mesa de Oración
+            MONAKUS
           </h1>
           <p className="hero-subtitle text-base text-foreground/85 max-w-lg font-sans italic mb-6 drop-shadow-md px-4 py-2 rounded-sm">
             "Donde peregrinos modernos

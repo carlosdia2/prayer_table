@@ -1,4 +1,5 @@
 import { Router, type IRouter } from "express";
+import { parseOracionesCsv } from "../lib/oracionesCsv";
 
 type DemoUser = {
   id: number;
@@ -187,6 +188,62 @@ router.post("/oraciones", (req, res) => {
   };
   oraciones.unshift(oracion);
   res.status(201).json(oracion);
+});
+
+router.post("/admin/oraciones/import-csv", (req, res) => {
+  try {
+    const csv = typeof req.body?.csv === "string" ? req.body.csv : "";
+    const allowDuplicates = Boolean(req.body?.allowDuplicates);
+
+    if (!csv.trim()) {
+      res.status(400).json({ mensaje: "Sube un CSV con titulo, texto y categoria." });
+      return;
+    }
+
+    const imported = parseOracionesCsv(csv);
+    let insertadas = 0;
+    let omitidas = 0;
+
+    for (const item of imported) {
+      const duplicate = oraciones.some(
+        (oracion) => oracion.titulo === item.titulo && oracion.categoria === item.categoria,
+      );
+
+      if (duplicate && !allowDuplicates) {
+        omitidas += 1;
+        continue;
+      }
+
+      oraciones.unshift({
+        id: nextOracionId++,
+        titulo: item.titulo,
+        texto: item.texto,
+        categoria: item.categoria,
+        duracionMinutos: null,
+        imagen: null,
+        autor: demoUser,
+        totalAmenes: 0,
+        totalMeAyuda: 0,
+        totalLaRezareHoy: 0,
+        totalFavoritos: 0,
+        totalComentarios: 0,
+        esFavorito: false,
+        miReaccion: null,
+        creadoEn: new Date().toISOString(),
+      });
+      insertadas += 1;
+    }
+
+    res.status(201).json({
+      total: imported.length,
+      insertadas,
+      omitidas,
+      categorias: [...new Set(imported.map((oracion) => oracion.categoria))],
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "No se pudo importar el CSV.";
+    res.status(400).json({ mensaje: message });
+  }
 });
 
 router.get("/oraciones/destacadas", (_req, res) => {

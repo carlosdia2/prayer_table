@@ -295,6 +295,11 @@
   backdrop-filter: blur(10px);
 }
 
+.oracion-detail-separator span,
+.oracion-card-separator span {
+  display: none;
+}
+
 @media (max-width: 767px) {
   .monastic-page-bg::before {
     background-image: url("/backgrounds/bg-vertical.png");
