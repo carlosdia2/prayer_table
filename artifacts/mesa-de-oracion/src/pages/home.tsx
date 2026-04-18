@@ -61,14 +61,8 @@ export default function Home() {
   return (
     <Layout>
       {/* Hero compacto */}
-      <section className="relative w-full overflow-hidden border-b border-primary/20 bg-background/50 backdrop-blur-[1px]">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-background/8 via-background/35 to-background/68" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/48 via-background/5 to-background/48" />
-          <div className="absolute inset-0 bg-primary/5" />
-        </div>
-
-        <div className="container relative z-10 mx-auto px-4 pt-10 pb-8 flex flex-col items-center text-center">
+      <section className="relative w-full overflow-hidden border-b border-primary/20">
+        <div className="container relative mx-auto px-4 pt-10 pb-8 flex flex-col items-center text-center">
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px w-12 bg-primary/40" />
             <Flame className="w-5 h-5 text-primary opacity-70" />
