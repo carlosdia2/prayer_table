@@ -6,6 +6,7 @@ type DemoUser = {
   googleId: string;
   nombre: string;
   email: string;
+  password: string | null;
   avatar: string | null;
   creadoEn: string;
 };
@@ -43,12 +44,16 @@ const demoUser: DemoUser = {
   googleId: "demo-user",
   nombre: "Hermano Sebastian",
   email: "demo@mesadeoracion.local",
+  password: "monakusdemo",
   avatar: null,
   creadoEn: now,
 };
 
 let nextOracionId = 7;
 let nextComentarioId = 3;
+let nextUserId = 2;
+const users: DemoUser[] = [demoUser];
+let currentDemoUser: DemoUser | null = null;
 
 const oraciones: DemoOracion[] = [
   {
@@ -136,7 +141,13 @@ router.get("/healthz", (_req, res) => {
 });
 
 router.get("/auth/me", (_req, res) => {
-  res.json(demoUser);
+  if (!currentDemoUser) {
+    res.status(401).json({ mensaje: "No autenticado" });
+    return;
+  }
+
+  const { password: _password, ...safeUser } = currentDemoUser;
+  res.json(safeUser);
 });
 
 router.get("/auth/google", (_req, res) => {
@@ -144,7 +155,53 @@ router.get("/auth/google", (_req, res) => {
 });
 
 router.post("/auth/logout", (_req, res) => {
+  currentDemoUser = null;
   res.json({ mensaje: "Sesion cerrada" });
+});
+
+router.post("/auth/email/register", (req, res) => {
+  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+  const password = typeof req.body?.password === "string" ? req.body.password : "";
+  const nombre = typeof req.body?.nombre === "string" && req.body.nombre.trim()
+    ? req.body.nombre.trim()
+    : email.split("@")[0] || "Usuario";
+
+  if (!email || !email.includes("@") || password.length < 8) {
+    res.status(400).json({ mensaje: "Introduce un email valido y una contrasena de al menos 8 caracteres." });
+    return;
+  }
+
+  if (users.some((user) => user.email === email)) {
+    res.status(409).json({ mensaje: "Ya existe una cuenta con este correo." });
+    return;
+  }
+
+  const user: DemoUser = {
+    id: nextUserId++,
+    googleId: `email:${email}`,
+    nombre,
+    email,
+    password,
+    avatar: null,
+    creadoEn: new Date().toISOString(),
+  };
+  users.push(user);
+  currentDemoUser = user;
+  res.status(201).json({ ...user, password: undefined });
+});
+
+router.post("/auth/email/login", (req, res) => {
+  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+  const password = typeof req.body?.password === "string" ? req.body.password : "";
+  const user = users.find((candidate) => candidate.email === email && candidate.password === password);
+
+  if (!user) {
+    res.status(401).json({ mensaje: "Correo o contrasena incorrectos." });
+    return;
+  }
+
+  currentDemoUser = user;
+  res.json({ ...user, password: undefined });
 });
 
 router.get("/oraciones", (req, res) => {

@@ -9,7 +9,9 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
 if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
   const publicBaseUrl = process.env.API_PUBLIC_URL ?? process.env.PUBLIC_BASE_URL ?? "http://localhost:3000";
-  const callbackURL = `${publicBaseUrl.replace(/\/$/, "")}/api/auth/google/callback`;
+  const callbackURL =
+    process.env.GOOGLE_CALLBACK_URL ??
+    `${publicBaseUrl.replace(/\/$/, "")}/api/auth/google/callback`;
 
   passport.use(
     new GoogleStrategy(
@@ -22,15 +24,23 @@ if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
         try {
           const googleId = profile.id;
           const nombre = profile.displayName ?? "Usuario";
-          const email = profile.emails?.[0]?.value ?? "";
+          const email = profile.emails?.[0]?.value ?? `${googleId}@google.local`;
           const avatar = profile.photos?.[0]?.value ?? null;
 
           const [existingUser] = await db
             .select()
             .from(usuariosTable)
-            .where(eq(usuariosTable.googleId, googleId));
+            .where(eq(usuariosTable.email, email));
 
           if (existingUser) {
+            if (existingUser.googleId !== googleId) {
+              const [updatedUser] = await db
+                .update(usuariosTable)
+                .set({ googleId, avatar })
+                .where(eq(usuariosTable.id, existingUser.id))
+                .returning();
+              return done(null, updatedUser);
+            }
             return done(null, existingUser);
           }
 
